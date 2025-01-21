@@ -67,7 +67,7 @@ custom_css = """
 """
 st.markdown(custom_css, unsafe_allow_html=True)
 
-st.header("🤖 E can track your calories! 😊")
+st.header("🤖 E can track calories of your food! 😊")
 
 # Initialize session state variables if not already set
 if "show_camera" not in st.session_state:
