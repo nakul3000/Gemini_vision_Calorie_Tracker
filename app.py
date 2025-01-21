@@ -14,20 +14,7 @@ from PIL import Image
 # Instead of load_dotenv() and os.getenv(...), use:
 
 # Inject custom CSS for background colors
-custom_css = """
-<style>
-/* Set main background color */
-[data-testid="stAppViewContainer"] {
-    background-color: #EFECD8;
-}
 
-/* Set secondary background color for sidebar or container elements */
-[data-testid="stSidebar"] {
-    background-color: #ECE094;
-}
-</style>
-"""
-st.markdown(custom_css, unsafe_allow_html=True)
 
 
 api_key = st.secrets["GOOGLE_API_KEY"]
@@ -65,6 +52,21 @@ class FakeUploadedFile(io.BytesIO):
         self.type = mime_type
 
 st.set_page_config(page_title="Gemini Health Calorie Tracker")
+custom_css = """
+<style>
+/* Set main background color */
+[data-testid="stAppViewContainer"] {
+    background-color: #EFECD8;
+}
+
+/* Set secondary background color for sidebar or container elements */
+[data-testid="stSidebar"] {
+    background-color: #ECE094;
+}
+</style>
+"""
+st.markdown(custom_css, unsafe_allow_html=True)
+
 st.header("🤖 E can track your calories! 😊")
 
 # Initialize session state variables if not already set
