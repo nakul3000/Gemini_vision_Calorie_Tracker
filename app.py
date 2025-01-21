@@ -12,6 +12,24 @@ from PIL import Image
 #genai.configure(api_key=os.getenv("GOOGLE_API_KEY"))
 
 # Instead of load_dotenv() and os.getenv(...), use:
+
+# Inject custom CSS for background colors
+custom_css = """
+<style>
+/* Set main background color */
+[data-testid="stAppViewContainer"] {
+    background-color: #EFECD8;
+}
+
+/* Set secondary background color for sidebar or container elements */
+[data-testid="stSidebar"] {
+    background-color: #ECE094;
+}
+</style>
+"""
+st.markdown(custom_css, unsafe_allow_html=True)
+
+
 api_key = st.secrets["GOOGLE_API_KEY"]
 genai.configure(api_key=api_key)
 
