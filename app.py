@@ -42,11 +42,23 @@ st.set_page_config(page_title = "Gemini Health Calorie Tracker")
 
 st.header("🤖 E can track your calories! 😊")
 
-# Provide options to the user: capture using camera or upload from device
-camera_image = st.camera_input("Take a Picture")
+# Initialize session state for camera activation
+if "show_camera" not in st.session_state:
+    st.session_state.show_camera = False
+
+# Button to trigger camera activation
+if st.button("Take Picture"):
+    st.session_state.show_camera = True
+
+# Conditionally render the camera widget based on session state
+camera_image = None
+if st.session_state.show_camera:
+    camera_image = st.camera_input("Capture an image")
+
+# Option to upload an image file
 uploaded_file = st.file_uploader("Or upload an image...", type=["jpg", "jpeg", "png"])
 
-# Determine which image to use: priority to camera capture if available, else file upload
+# Determine which image to use: prioritize camera capture over upload
 image = None
 source_file = None
 
@@ -94,7 +106,6 @@ if submit:
         st.error("No image captured or uploaded. Please provide an image.")
 
 
-        
 # make ui a bit nicer and integrate picture taking ability for phone purposes.
 # so one thing is including past chats and convos as konwledge base to suggest new dishes based on this
 # voice assisted
