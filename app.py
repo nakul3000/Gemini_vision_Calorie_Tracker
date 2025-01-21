@@ -42,33 +42,30 @@ st.set_page_config(page_title = "Gemini Health Calorie Tracker")
 
 st.header("🤖 E can track your calories! 😊")
 
-# Option for file upload
-uploaded_file = st.file_uploader("Choose an image...", type=["jpg", "jpeg", "png"])
+# Provide options to the user: capture using camera or upload from device
+camera_image = st.camera_input("Take a Picture")
+uploaded_file = st.file_uploader("Or upload an image...", type=["jpg", "jpeg", "png"])
 
-# Placeholder for camera input (initially not shown)
-camera_input_placeholder = st.empty()
-
-# Button to trigger camera usage
-if st.button("Take Picture"):
-    # Render camera_input widget when button is clicked
-    camera_image = camera_input_placeholder.camera_input("Capture an image")
-else:
-    camera_image = None
-
+# Determine which image to use: priority to camera capture if available, else file upload
 image = None
-# Prefer camera_image over uploaded_file if available
+source_file = None
+
 if camera_image is not None:
-    image = Image.open(camera_image)
-    st.image(image, caption="Captured Image.", use_column_width=True)
-    # Use camera_image for processing
-    source_file = camera_image
+    try:
+        image = Image.open(camera_image)
+        st.image(image, caption="Captured Image.", use_column_width=True)
+        source_file = camera_image
+    except Exception as e:
+        st.error(f"Error processing captured image: {e}")
 elif uploaded_file is not None:
-    image = Image.open(uploaded_file)
-    st.image(image, caption="Uploaded Image.", use_column_width=True)
-    # Use uploaded_file for processing
-    source_file = uploaded_file
+    try:
+        image = Image.open(uploaded_file)
+        st.image(image, caption="Uploaded Image.", use_column_width=True)
+        source_file = uploaded_file
+    except Exception as e:
+        st.error(f"Error processing uploaded image: {e}")
 else:
-    source_file = None
+    st.info("Please capture an image or upload one.")
 
 submit = st.button("Tell me the total calories")
 
@@ -84,17 +81,20 @@ in the below format:
 Finally, mention if the food is healthy or not.
 """
 
-
-
 if submit:
     if source_file is not None:
-        image_data = input_image_setup(source_file)
-        response = get_gemini_response(input_prompt, image_data)
-
-        st.header("The Response is:")
-        st.write(response)
+        try:
+            image_data = input_image_setup(source_file)
+            response = get_gemini_response(input_prompt, image_data)
+            st.header("The Response is:")
+            st.write(response)
+        except Exception as e:
+            st.error(f"An error occurred while processing the image: {e}")
     else:
-        st.error("Please upload an image or capture one using your camera.")
+        st.error("No image captured or uploaded. Please provide an image.")
+
+
+        
 # make ui a bit nicer and integrate picture taking ability for phone purposes.
 # so one thing is including past chats and convos as konwledge base to suggest new dishes based on this
 # voice assisted
