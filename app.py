@@ -5,10 +5,15 @@ from dotenv import load_dotenv
 
 from PIL import Image
 
-load_dotenv() # loads all the enviroinment variables
+#load_dotenv() # loads all the enviroinment variables
 
 
-genai.configure(api_key=os.getenv("GOOGLE_API_KEY"))
+#genai.configure(api_key=os.getenv("GOOGLE_API_KEY"))
+
+# Instead of load_dotenv() and os.getenv(...), use:
+api_key = st.secrets["GOOGLE_API_KEY"]
+genai.configure(api_key=api_key)
+
 
 def get_gemini_response(input_prompt, image):
     model = genai.GenerativeModel('gemini-1.5-flash')
