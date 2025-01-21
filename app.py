@@ -2,7 +2,8 @@ import streamlit as st
 import google.generativeai as genai
 import os
 from dotenv import load_dotenv
-
+import io
+from streamlit.runtime.uploaded_file_manager import UploadedFile
 from PIL import Image
 
 #load_dotenv() # loads all the enviroinment variables
@@ -42,26 +43,57 @@ st.set_page_config(page_title = "Gemini Health Calorie Tracker")
 
 st.header("🤖 E can track your calories! 😊")
 
-# Initialize session state for camera activation
+# Dictionary mapping example names to relative file paths
+example_options = {
+    "Example 1": "images/food1.jpg",
+    "Example 2": "images/food2.jpg",
+    "Example 3": "images/food3.jpg"
+}
+
+# Dropdown for selecting an example image
+selected_example = st.selectbox("Choose an example image", list(example_options.keys()))
+
+# Button to load the selected example image
+source_file = None
+if st.button("Load Example"):
+    try:
+        # Load the selected example image using the relative path
+        image_path = example_options[selected_example]
+        image = Image.open(image_path)
+        st.image(image, caption=f"{selected_example}", use_container_width=True)
+
+        # Read the image bytes
+        with open(image_path, "rb") as file:
+            file_bytes = file.read()
+
+        # Create an in-memory file object that mimics an uploaded file
+        uploaded_file = UploadedFile(
+            id="example-file", 
+            name=image_path.split("/")[-1], 
+            type="image/jpeg",  # adjust if using a different format
+            data=file_bytes, 
+            file_owner=None, 
+            mime_type="image/jpeg"
+        )
+        source_file = uploaded_file
+
+    except Exception as e:
+        st.error(f"Error loading example image: {e}")
+
+# Provide camera and upload options as before
 if "show_camera" not in st.session_state:
     st.session_state.show_camera = False
 
-# Button to trigger camera activation
 if st.button("Take Picture"):
     st.session_state.show_camera = True
 
-# Conditionally render the camera widget based on session state
 camera_image = None
 if st.session_state.show_camera:
     camera_image = st.camera_input("Capture an image")
 
-# Option to upload an image file
 uploaded_file = st.file_uploader("Or upload an image...", type=["jpg", "jpeg", "png"])
 
-# Determine which image to use: prioritize camera capture over upload
-image = None
-source_file = None
-
+# Determine which image to use: prioritize camera capture, then file upload, then example if loaded
 if camera_image is not None:
     try:
         image = Image.open(camera_image)
@@ -76,8 +108,11 @@ elif uploaded_file is not None:
         source_file = uploaded_file
     except Exception as e:
         st.error(f"Error processing uploaded image: {e}")
+elif source_file is not None:
+    # Example image is already loaded and set as source_file
+    pass
 else:
-    st.info("Please capture an image or upload one.")
+    st.info("Please capture an image, upload one, or load an example.")
 
 submit = st.button("Tell me the total calories")
 
@@ -103,7 +138,7 @@ if submit:
         except Exception as e:
             st.error(f"An error occurred while processing the image: {e}")
     else:
-        st.error("No image captured or uploaded. Please provide an image.")
+        st.error("No image captured, uploaded, or example loaded. Please provide an image.")
 
 
 # make ui a bit nicer and integrate picture taking ability for phone purposes.
