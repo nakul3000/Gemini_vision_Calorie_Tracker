@@ -79,6 +79,8 @@ in the below format:
 Finally, mention if the food is healthy or not.
 """
 
+
+
 if submit:
     if source_file is not None:
         image_data = input_image_setup(source_file)
