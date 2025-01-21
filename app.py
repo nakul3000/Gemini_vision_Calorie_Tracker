@@ -65,14 +65,14 @@ source_file = None
 if camera_image is not None:
     try:
         image = Image.open(camera_image)
-        st.image(image, caption="Captured Image.", use_column_width=True)
+        st.image(image, caption="Captured Image.", use_container_width=True)
         source_file = camera_image
     except Exception as e:
         st.error(f"Error processing captured image: {e}")
 elif uploaded_file is not None:
     try:
         image = Image.open(uploaded_file)
-        st.image(image, caption="Uploaded Image.", use_column_width=True)
+        st.image(image, caption="Uploaded Image.", use_container_width=True)
         source_file = uploaded_file
     except Exception as e:
         st.error(f"Error processing uploaded image: {e}")
